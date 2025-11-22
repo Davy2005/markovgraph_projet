@@ -49,3 +49,46 @@ int verifMarkov(adj_list *);
 
 // Génération d'un fichier au format Mermaid
 void convertMermaid(adj_list *, const char *);
+
+// =====================
+// Partie 2 : Tarjan
+// =====================
+
+// Infos Tarjan pour un sommet
+typedef struct {
+    int id;        // identifiant du sommet (1..N)
+    int index;     // numéro temporaire (ordre de visite Tarjan)
+    int lowlink;   // numero accessible (plus petit index atteignable)
+    int onstack;   // 1 si dans la pile de Tarjan, 0 sinon
+} tarjan_vertex;
+
+// Une composante fortement connexe (classe)
+typedef struct {
+    int *vertices; // sommets de la classe
+    int size;      // nombre de sommets
+    int capacity;  // capacité allouée
+    char name[10]; // nom de la classe, ex: "C1"
+} tarjan_class;
+
+// Ensemble des classes trouvées par Tarjan
+typedef struct {
+    tarjan_class *classes;
+    int size;      // nombre de classes utilisées
+    int capacity;  // capacité allouée
+} tarjan_partition;
+
+// Petite pile pour l'algo de Tarjan
+typedef struct {
+    int *data;
+    int top;
+    int capacity;
+} stack;
+
+// Parcours récursif de Tarjan (DFS)
+void t_parcours(
+    int,
+    adj_list *,
+    tarjan_vertex *,
+    stack *,
+    tarjan_partition *
+);
