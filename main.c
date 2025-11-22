@@ -12,7 +12,7 @@ int main() {
 //
 
     printf("==============================================\n");
-    printf("        TEST PARTIE 1 : GRAPH MARKOV + FICHIER MERMAID \n");
+    printf("  TEST PARTIE 1 : GRAPH MARKOV + FICHIER MERMAID        \n");
     printf("==============================================\n\n");
 
     // Essai sur exemple1_chatGPT_fixed.txt
@@ -52,11 +52,108 @@ int main() {
     verifMarkov(&list3);
     printf("\n");
 
-    //Conversion des données du graph en données mermaid avec exemple_valid_step3.txt
+    //Essai la conversion des données du graph en données mermaid avec exemple_valid_step3.txt
 
     printf("Creation du fichier mermaid sur exemple_valid_step3.txt !\n");
     adj_list list4 = readGraph("data/exemple_valid_step3.txt");
     convertMermaid(&list4, "resultatmermaid.txt");
 
+    printf("==============================================\n");
+    printf("        TEST PARTIE 2 : TARJAN + HASSE        \n");
+    printf("==============================================\n\n");
+
+    // =======================================================
+    // 1) Charger un graphe de test
+    // =======================================================
+    printf("[1] Chargement du graphe exemple_valid_step3.txt...\n");
+    adj_list g = readGraph("data/exemple_scc1.txt");
+    printf("Graphe charge avec %d sommets.\n\n", g.size);
+
+    printf("Liste d'adjacence :\n");
+    displayAdjaList(&g);
+    printf("\n");
+
+
+    // =======================================================
+    // 2) Exécuter Tarjan
+    // =======================================================
+    printf("[2] Execution de Tarjan...\n");
+
+    tarjan_partition part = tarjan(&g);
+
+    printf("Nombre de classes trouvees : %d\n\n", part.size);
+
+    printf("Liste des classes detectees :\n");
+    printPartition(&part);
+    printf("\n");
+
+
+    // =======================================================
+    // 3) Calcul du tableau sommet -> classe
+    // =======================================================
+    printf("[3] Construction du tableau sommet -> classe...\n");
+
+    int *classOf = computeVertexToClassTable(&part, &g);
+
+    printf("Sommet | Classe\n");
+    printf("----------------\n");
+
+    for (int i = 0; i < g.size; i++)
+        printf("  %2d   |   C%d\n", i + 1, classOf[i] + 1);
+
+    printf("\n");
+
+
+    // =======================================================
+    // 4) Construire les liens entre classes
+    // =======================================================
+    printf("[4] Construction des liens entre classes...\n");
+
+    t_link_array links = buildClassLinks(&g, &part);
+
+    printf("Liens trouves (avant suppression transitifs) :\n");
+    for (int i = 0; i < links.log_size; i++) {
+        printf("  %s -> %s\n",
+            part.classes[links.links[i].from].name,
+            part.classes[links.links[i].to].name);
+    }
+    printf("\n");
+
+
+    // =======================================================
+    // 5) Supprimer les liens transitifs
+    // =======================================================
+    printf("[5] Suppression des liens transitifs...\n");
+
+    removeTransitiveLinks(&links);
+
+    printf("Liens finaux (diagramme de Hasse) :\n");
+    for (int i = 0; i < links.log_size; i++) {
+        printf("  %s -> %s\n",
+            part.classes[links.links[i].from].name,
+            part.classes[links.links[i].to].name);
+    }
+    printf("\n");
+
+
+    // =======================================================
+    // 6) Export du Hasse en Mermaid
+    // =======================================================
+    printf("[6] Export du diagramme de Hasse (hasse_test_output.mmd)...\n");
+
+    convertHasseToMermaid(&part, &links, "hasse_test_output.mmd");
+
+    printf("Fichier genere : hasse_test_output.mmd\n");
+    printf("\n");
+
+    // =======================================================
+    // 7) Affichage des caractéristiques
+    // =======================================================
+
+    printf("[7] Etape 3 : caracteristiques du graphe\n\n");
+
+    displayGraphSpecificity(&part, &links);
+
+    free(classOf);
     return 0;
 }
