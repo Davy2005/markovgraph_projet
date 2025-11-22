@@ -29,9 +29,9 @@ static char *getID(int i)
 }
 
 
-// ==========================================
-// ===        Partie 1 : Liste + Graph    ===
-// ==========================================
+// =====================
+// Partie 1 : listes + graphe
+// =====================
 
 //Creer une cellule
 cell *createCell(int destination, float prob)
@@ -156,12 +156,13 @@ int verifMarkov(adj_list *liste)
             cour = cour->next;
         }
 
-        if (total < 0.99f || total > 1.0f)
+        // Tolérance : [0.99 ; 1.01] pour les arrondies minimes du type 1.00000001000
+        if (total < 0.99f || total > 1.01f)
             markov = 0;
     }
 
     if (markov) {
-        printf("Le graphe est bien un graphe de Markov.\n");
+        printf("Le graphe est  un graphe de Markov.\n");
         return 1;
     }
 
@@ -177,12 +178,13 @@ int verifMarkov(adj_list *liste)
             cour = cour->next;
         }
 
-        if (total < 0.99f || total > 1.0f)
-            printf("Sommet %d : somme des proba = %f\n", i + 1, total);
+        if (total < 0.99f || total > 1.01f)
+            printf("La somme des probabilites du sommet %d est %f\n.", i + 1, total);
     }
 
     return 0;
 }
+
 
 //Converti le format de donnée en format Mermaid pour construire le graph sur Mermaid
 void convertMermaid(adj_list *liste, const char *nomdufichier)
@@ -226,9 +228,9 @@ void convertMermaid(adj_list *liste, const char *nomdufichier)
     fclose(f);
 }
 
-// ==========================================
-// ===        Partie 2 : Tarjan           ===
-// ==========================================
+// =====================
+// Partie 2 : Tarjan
+// =====================
 
 // Initialisation d'une pile
 void stack_init(stack *s, int capacity)
