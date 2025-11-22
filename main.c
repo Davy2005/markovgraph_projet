@@ -56,7 +56,7 @@ int main() {
 
     printf("Creation du fichier mermaid sur exemple_valid_step3.txt !\n");
     adj_list list4 = readGraph("data/exemple_valid_step3.txt");
-    convertMermaid(&list4, "resultatmermaid.txt");
+    convertMermaid(&list4, "resultatmermaid.mmd");
 
     printf("==============================================\n");
     printf("        TEST PARTIE 2 : TARJAN + HASSE        \n");
@@ -66,7 +66,7 @@ int main() {
     // 1) Charger un graphe de test
     // =======================================================
     printf("[1] Chargement du graphe exemple_valid_step3.txt...\n");
-    adj_list g = readGraph("data/exemple_scc1.txt");
+    adj_list g = readGraph("data/exemple_valid_step3.txt");
     printf("Graphe charge avec %d sommets.\n\n", g.size);
 
     printf("Liste d'adjacence :\n");
