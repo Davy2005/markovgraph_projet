@@ -229,3 +229,39 @@ void convertMermaid(adj_list *liste, const char *nomdufichier)
 // =====================
 // Partie 2 : Tarjan
 // =====================
+
+// Initialisation d'une pile
+void stack_init(stack *s, int capacity)
+{
+    s->data = malloc(capacity * sizeof(int));
+    s->top = -1;
+    s->capacity = capacity;
+}
+
+void stack_push(stack *s, int v)
+{
+    s->data[++s->top] = v;
+}
+
+int stack_pop(stack *s)
+{
+    return s->data[s->top--];
+}
+
+int stack_empty(stack *s)
+{
+    return (s->top < 0);
+}
+
+// Creer et initialisation d'un tableau de sommets ( tarjan vertex )
+tarjan_vertex *initTabTarjanVertex(adj_list *g)
+{
+    tarjan_vertex *T = malloc(g->size * sizeof(tarjan_vertex));
+    for (int i = 0; i < g->size; i++) {
+        T[i].id = i + 1;
+        T[i].index = -1;
+        T[i].lowlink = -1;
+        T[i].onstack = 0;
+    }
+    return T;
+}
