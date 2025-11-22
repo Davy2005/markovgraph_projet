@@ -156,13 +156,13 @@ int verifMarkov(adj_list *liste)
             cour = cour->next;
         }
 
-        // Tolérance : [0.99 ; 1.01] pour les arrondies minimes du type 1.00000001000
+        // Tolérance : [0.99 ; 1.01] pour les arrondis minimes du type 0.999999 ou 1.000001
         if (total < 0.99f || total > 1.01f)
             markov = 0;
     }
 
     if (markov) {
-        printf("Le graphe est  un graphe de Markov.\n");
+        printf("Le graphe est un graphe de Markov.\n");
         return 1;
     }
 
@@ -179,11 +179,12 @@ int verifMarkov(adj_list *liste)
         }
 
         if (total < 0.99f || total > 1.01f)
-            printf("La somme des probabilites du sommet %d est %f\n.", i + 1, total);
+            printf("La somme des probabilites du sommet %d est %f\n", i + 1, total);
     }
 
     return 0;
 }
+
 
 
 //Converti le format de donnée en format Mermaid pour construire le graph sur Mermaid
@@ -331,7 +332,7 @@ void t_parcours(int v, adj_list *G, tarjan_vertex *T, stack *S, tarjan_partition
             int w = stack_pop(S);
             T[w].onstack = 0;
             class_add(C, w + 1);
-            if (w == v) break;
+            if (w == v) return;
         }
     }
 }
