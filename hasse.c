@@ -166,12 +166,14 @@ void displayGraphSpecificity(tarjan_partition *p, t_link_array *A)
         if (persistante[c] && p->classes[c].size == 1) {
             int v = p->classes[c].vertices[0];
             printf("Etat %d est absorbant\n", v);
+            printf("\n");
         }
     }
 
     if (n == 1)
         printf("Le graphe est irreductible.\n");
-    else
+    else {
         printf("Le graphe n'est PAS irreductible.\n");
-        printf("\n");
+    }
+    printf("\n");
 }
