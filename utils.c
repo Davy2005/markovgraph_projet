@@ -29,9 +29,9 @@ static char *getID(int i)
 }
 
 
-// =====================
-// Partie 1 : listes + graphe
-// =====================
+// ==========================================
+// ===        Partie 1 : Liste + Graph    ===
+// ==========================================
 
 //Creer une cellule
 cell *createCell(int destination, float prob)
@@ -226,9 +226,9 @@ void convertMermaid(adj_list *liste, const char *nomdufichier)
     fclose(f);
 }
 
-// =====================
-// Partie 2 : Tarjan
-// =====================
+// ==========================================
+// ===        Partie 2 : Tarjan           ===
+// ==========================================
 
 // Initialisation d'une pile
 void stack_init(stack *s, int capacity)
@@ -353,4 +353,27 @@ tarjan_partition tarjan(adj_list *g)
             t_parcours(i, g, T, &S, &P);
 
     return P;
+}
+
+// Affiche les classes C1, C2, ...
+void printPartition(tarjan_partition *p)
+{
+    for (int i = 0; i < p->size; i++) {
+        printf("%s: { ", p->classes[i].name);
+        for (int j = 0; j < p->classes[i].size; j++)
+            printf("%d ", p->classes[i].vertices[j]);
+        printf("}\n");
+    }
+}
+
+// Construit le tableau qui donne la classe de chaque sommet
+int *computeVertexToClassTable(tarjan_partition *p, adj_list *g)
+{
+    int *T = malloc(g->size * sizeof(int));
+
+    for (int c = 0; c < p->size; c++)
+        for (int k = 0; k < p->classes[c].size; k++)
+            T[p->classes[c].vertices[k] - 1] = c;
+
+    return T;
 }
