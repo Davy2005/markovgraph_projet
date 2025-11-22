@@ -33,7 +33,7 @@ int main() {
 
 
     adjlist test4 = readGraph("data/exemple_valid_step3.txt");
-    creerMermaid(&test4, "resultatgraph.txt");
+    creerMermaid(&test4, "resultatgraph.mmd"); // Génère un fichier MMD comptabile pour l'affichage sur Mermaid.
 
 
     return 0;
