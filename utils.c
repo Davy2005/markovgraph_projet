@@ -265,3 +265,71 @@ tarjan_vertex *initTabTarjanVertex(adj_list *g)
     }
     return T;
 }
+
+// Ajoute un sommet v dans la classe c (agrandit si besoin)
+void class_add(tarjan_class *c, int v)
+{
+    if (c->size == c->capacity) {
+        c->capacity *= 2;
+        c->vertices = realloc(c->vertices, c->capacity * sizeof(int));
+    }
+    c->vertices[c->size++] = v;
+}
+
+// Ajoute une nouvelle classe dans la partition
+tarjan_class *partition_add_class(tarjan_partition *p)
+{
+    if (p->size == p->capacity) {
+        p->capacity *= 2;
+        p->classes = realloc(p->classes, p->capacity * sizeof(tarjan_class));
+    }
+    return &p->classes[p->size++];
+}
+
+// Compteur global pour les indices Tarjan
+int TARJAN_INDEX = 0;
+
+// DFS de Tarjan à partir du sommet v
+void t_parcours(int v, adj_list *G, tarjan_vertex *T, stack *S, tarjan_partition *P)
+{
+    T[v].index = TARJAN_INDEX;
+    T[v].lowlink = TARJAN_INDEX;
+    TARJAN_INDEX++;
+
+    stack_push(S, v);
+    T[v].onstack = 1;
+
+    // Parcours des voisins
+    for (cell *c = G->tab[v].head; c; c = c->next) {
+        int w = c->dest - 1; // sommets du graphe sont 1-based
+
+        if (T[w].index == -1) {
+            // Nouveau sommet : on continue le DFS
+            t_parcours(w, G, T, S, P);
+            if (T[w].lowlink < T[v].lowlink)
+                T[v].lowlink = T[w].lowlink;
+        }
+        else if (T[w].onstack) {
+            // Retour vers un sommet encore dans la pile
+            if (T[w].index < T[v].lowlink)
+                T[v].lowlink = T[w].index;
+        }
+    }
+
+    // Si v est racine d'une CFC ( une classe )
+    if (T[v].lowlink == T[v].index) {
+        tarjan_class *C = partition_add_class(P);
+        sprintf(C->name, "C%d", P->size);
+        C->size = 0;
+        C->capacity = 4;
+        C->vertices = malloc(4 * sizeof(int));
+
+        // On dépile jusqu'à revenir à v
+        while (1) {
+            int w = stack_pop(S);
+            T[w].onstack = 0;
+            class_add(C, w + 1);
+            if (w == v) break;
+        }
+    }
+}
