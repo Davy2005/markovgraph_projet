@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "hasse.h"
 
-char *getID(int i)
+static char *getID(int i)
 {
     // translate from 1,2,3, .. ,500+ to A,B,C,..,Z,AA,AB,...
     static char buffer[10];
@@ -29,20 +29,16 @@ char *getID(int i)
 }
 
 
-// *******************
-// Partie 1
-// *******************
+// =====================
+// Partie 1 : listes + graphe
+// =====================
 
-
-
-// Création d'une cellule / arête
-cell *createCell(int destination, float prob) {
-
+//Creer une cellule
+cell *createCell(int destination, float prob)
+{
     cell *newcell = malloc(sizeof(cell));
-    
     if (newcell == NULL) {
-
-        printf("Erreur : Erreur d’allocation mémoire de la cellule !\n");
+        printf("Erreur : allocation memoire cellule\n");
         exit(EXIT_FAILURE);
     }
 
@@ -50,21 +46,20 @@ cell *createCell(int destination, float prob) {
     newcell->proba = prob;
     newcell->next = NULL;
     return newcell;
-
 }
 
-
-
-// Créer une liste et initialisée à vide
-list createList() {
-    list list;
-    list.head = NULL;
-    return list;
+//Cree une liste chainee simple avec un head
+list createList(void)
+{
+    list l;
+    l.head = NULL;
+    return l;
 }
 
-// Afficher une liste
-void displaylist(list *list) {
-    cell *courant = list->head;
+//Affiche la liste
+void displaylist(list *l)
+{
+    cell *courant = l->head;
     while (courant != NULL) {
         printf(" -> (%d, %f)", courant->dest, courant->proba);
         courant = courant->next;
@@ -72,35 +67,35 @@ void displaylist(list *list) {
     printf("\n");
 }
 
-// Insertion en tête de liste
-void addCellHead(list *list, int destination, float prob) {
+//Ajoute une cellule en tete de liste
+void addCellHead(list *l, int destination, float prob)
+{
     cell *newCell = createCell(destination, prob);
-    newCell->next = list->head;
-    list->head = newCell;
+    newCell->next = l->head;
+    l->head = newCell;
 }
 
-
-
-// Créer une liste d’adjacence vide (tableau de listes)
-adj_list createAdjaList(int size) {
+//Cree une liste adjacente (une structure qui contient un tableau des listes chainées simples
+adj_list createAdjaList(int size)
+{
     adj_list adjlist;
     adjlist.size = size;
     adjlist.tab = malloc(size * sizeof(list));
     if (adjlist.tab == NULL) {
-        printf("Erreur : Erreur d'allocation mémoire d'une liste adjacente !\n");
+        printf("Erreur : allocation memoire liste d'adjacence\n");
         exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; i < size; i++) {
-        adjlist.tab[i] = createList(); // les différentes indices ont maintenant une liste vide!
-    }
+    // On initialise chaque entrée avec une liste vide
+    for (int i = 0; i < size; i++)
+        adjlist.tab[i] = createList();
 
     return adjlist;
 }
 
-
-
-void displayAdjaList(adj_list *adj) {
+//Affichage de la liste ajdacente
+void displayAdjaList(adj_list *adj)
+{
     for (int i = 0; i < adj->size; i++) {
         printf("Liste pour le sommet %d : [head @]", i + 1);
         cell *cur = adj->tab[i].head;
@@ -114,8 +109,7 @@ void displayAdjaList(adj_list *adj) {
     }
 }
 
-
-
+//Lecture d'un fichier de donnée et la retranscrit dans une adjacente liste 
 adj_list readGraph(const char *filename) {
     FILE *file = fopen(filename, "rt"); // read-only, text
     int nbvert, depart, arrivee;
@@ -147,56 +141,35 @@ adj_list readGraph(const char *filename) {
     return adj;   // return la liste d’adjacence remplit
 }
 
+//Vérification de si c'est bien un graph de Markov
+int verifMarkov(adj_list *liste)
+{
+    int markov = 1;
 
-// Check si la somme des probabilités sortantes d'un sommet est égal à 1 ( entre 0,99 et 1).
-// Retourne si c'est bien un graphe de Markov
-
-
-int verifMarkov(adj_list *liste) {
-
-    int markov = 1; // on suppose que tout est correct au début
-    int i;
-
-    // On vérifie si tous les sommets sont conformes
-    for (i = 0; i < liste->size; i++) {
-
-        float total = 0.0;
+    // On vérifie la somme des probas pour chaque sommet
+    for (int i = 0; i < liste->size; i++) {
+        float total = 0.0f;
         cell *cour = liste->tab[i].head;
 
-        
         while (cour != NULL) {
-
             total += cour->proba;
             cour = cour->next;
-
         }
 
-
-
-        // La somme des probas => doit être comprise entre 0.99 et 1.00
-        if (total < 0.99 || total > 1.0) {
-
+        if (total < 0.99f || total > 1.0f)
             markov = 0;
-
-        }
     }
 
-    // Si c'est bon alors on return 1 et on dit que c'est bien un graph de Markov
-    if (markov == 1) {
-
-        printf("Le graphe est bien un graphe de Markov !\n");
+    if (markov) {
+        printf("Le graphe est bien un graphe de Markov.\n");
         return 1;
-
     }
 
-    // Sinon, on dit que c'est pas un graph de Markov et on affiche les causes
-    printf("Le graphe n'est pas un graphe de Markov !\n");
+    printf("Le graphe n'est pas un graphe de Markov.\n");
 
-    // Affichage des sommets qui posent problèmes
-    for (i = 0; i < liste->size; i++) {
-
-
-        float total = 0;
+    // On affiche les sommets qui posent problème
+    for (int i = 0; i < liste->size; i++) {
+        float total = 0.0f;
         cell *cour = liste->tab[i].head;
 
         while (cour != NULL) {
@@ -204,25 +177,23 @@ int verifMarkov(adj_list *liste) {
             cour = cour->next;
         }
 
-        if (total < 0.99 || total > 1.00) {
-            printf("La somme de probabilite du sommet %d est de [%f].\n", i + 1, total);
-        }
+        if (total < 0.99f || total > 1.0f)
+            printf("Sommet %d : somme des proba = %f\n", i + 1, total);
     }
 
     return 0;
 }
 
-// Conversion d'un fichier de donnée de graph.txt en fichier de donnee mermaid.
-
-void convertMermaid(adj_list *liste, const char *nomdufichier) {
-
+//Converti le format de donnée en format Mermaid pour construire le graph sur Mermaid
+void convertMermaid(adj_list *liste, const char *nomdufichier)
+{
     FILE *f = fopen(nomdufichier, "w");
     if (f == NULL) {
-        printf("Erreur dans la conversion du fichier de donnee mermaid.\n");
+        printf("Erreur : impossible d'ouvrir le fichier Mermaid\n");
         return;
     }
 
-    // En-tête Mermaid
+    // Petite config pour Mermaid
     fprintf(f, "---\n");
     fprintf(f, "config:\n");
     fprintf(f, " layout: elk\n");
@@ -232,28 +203,18 @@ void convertMermaid(adj_list *liste, const char *nomdufichier) {
     fprintf(f, "flowchart LR\n");
 
     // Sommets
-    for (int i = 0; i < liste->size; i++) {
-        fprintf(f, "%s((%d))\n", getID(i+1), i+1);
-    }
+    for (int i = 0; i < liste->size; i++)
+        fprintf(f, "%s((%d))\n", getID(i + 1), i + 1);
 
     // Arêtes
-    for (int j = 0; j < liste->size; j=j+1) {
-
+    for (int j = 0; j < liste->size; j++) {
         cell *cour = liste->tab[j].head;
 
         char somdep[10];
-        strcpy(somdep, getID(j+1));
-
-        // On est forcé à utiliser strcpy pour les 2 getID ( source et arrivé ) 
-        // car getID fonctionne pas deux fois sur la même fonction, la valeur est écrasée à chaque fois.
-
+        strcpy(somdep, getID(j + 1));
 
         while (cour != NULL) {
-
-
             char somarv[10];
-
-
             strcpy(somarv, getID(cour->dest));
 
             fprintf(f, "%s -->|%.2f|%s\n", somdep, cour->proba, somarv);
@@ -265,7 +226,6 @@ void convertMermaid(adj_list *liste, const char *nomdufichier) {
     fclose(f);
 }
 
-
-// **************************************************************
-// PARTIE 2 – TARJAN
-// **************************************************************
+// =====================
+// Partie 2 : Tarjan
+// =====================
