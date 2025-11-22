@@ -1,55 +1,51 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
-// Partie 1 ***********************
+// =====================
+// Partie 1 : graphe
+// =====================
 
-//==== Déclaration des structures 
+// Cellule = une arête sortante du sommet
+typedef struct s_cell {
+    int dest;            // sommet d'arrivée
+    float proba;         // probabilité de transition
+    struct s_cell *next; // arête suivante
+} cell;
 
-// Une cellule représente une arête sortante d’un sommet
-typedef struct cell {
-    int sommetdest;       // sommet d’arrivée
-    float prob;           // probabilité de passage
-    struct cell *next;    // pointeur vers la cellule suivante
-} t_cell;
-
-// Une liste contient toutes les arêtes sortantes d’un sommet
+// Liste chaînée d'arêtes sortantes pour un sommet
 typedef struct {
-    t_cell *head;            // tête de la liste
-} t_list;
+    cell *head;
+} list;
 
-// Une liste d’adjacence représente le graphe complet
+// Liste d'adjacence = tableau de listes (une par sommet)
 typedef struct {
-    int size;              // nombre de sommets
-    t_list *tab;           // tableau de listes (1 par sommet)
-} adjlist;
+    int size;   // nombre de sommets
+    list *tab;  // tableau de listes
+} adj_list;
 
-//====== Fonction de création de cellules & listes
+// Création d'une cellule/arête
+cell *createCell(int, float);
 
-// Créer une cellule (arête)
-t_cell *createCell(int , float );
+// Création d'une liste vide
+list createList(void);
 
-// Créer une liste vide
-t_list createList();
+// Ajout en tête de liste
+void addCellHead(list *, int, float);
 
-// Ajouter une cellule à une liste
-void addCell(t_list *, int , float );
+// Création d'une liste d'adjacence vide
+adj_list createAdjaList(int);
 
-// Afficher une liste
-void printList(t_list *);
+// Affichage d'une liste
+void displaylist(list *);
 
-// Créer une liste d’adjacence vide (tableau de listes)
-adjlist createAdjList(int);
+// Affichage complet de la liste d'adjacence
+void displayAdjaList(adj_list *);
 
-// Afficher une liste d’adjacence
-void printAdjList(adjlist *);
+// Lecture d'un graphe à partir d'un fichier
+adj_list readGraph(const char *);
 
-// lire un fichier txt
-adjlist readGraph (const char *);
+// Vérification que le graphe est bien un graphe de Markov
+int verifMarkov(adj_list *);
 
-// Vérifier si le graphe est un graphe de Markov
-int verifGraphDeMarkov(adjlist *);
-
-//Transformer un fichier de donnée de graph en fichier mermaid pour dessinner le graph
-void creerMermaid(adjlist *, const char *);
-
-#endif
+// Génération d'un fichier au format Mermaid
+void convertMermaid(adj_list *, const char *);
