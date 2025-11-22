@@ -1,40 +1,62 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include "hasse.h"
 #include "utils.h"
+
 
 int main() {
 
-    // Partie 1
+// *************************
+// Partie 1
+// *************************
+//
 
-    //Teste sur les donnés de exemple1.txt
-    adjlist test = readGraph("data/exemple1.txt");
-    printAdjList(&test);
+    printf("==============================================\n");
+    printf("        TEST PARTIE 1 : GRAPH MARKOV + FICHIER MERMAID \n");
+    printf("==============================================\n\n");
 
+    // Essai sur exemple1_chatGPT_fixed.txt
+
+    printf("Essai sur exemple1_chatGPT_fixed.txt :\n");
+    adj_list list0 = readGraph("data/exemple1_chatGPT_fixed.txt");
+    displayAdjaList(&list0);
     printf("\n");
-    verifGraphDeMarkov(&test);
-    printf("\n");
-
-    //Teste sur les donnés de exemple3.txt
-    adjlist test2 = readGraph("data/exemple3.txt");
-    printAdjList(&test2);
-
-    printf("\n");
-    verifGraphDeMarkov(&test2);
-    printf("\n");
-
-    //Teste sur les donnés de exemple1_from_chatGPT.txt
-    adjlist test3 = readGraph("data/exemple1_from_chatGPT.txt");
-    printAdjList(&test3);
-
-    printf("\n");
-    verifGraphDeMarkov(&test3);
+    verifMarkov(&list0);
     printf("\n");
 
-    //Test sur l'exportation du graph avec exemple_valid_step3.txt
+    // Essai sur exemple1
+
+    printf("Essai sur exemple1 :\n");
+    adj_list list1 = readGraph("data/exemple1.txt");
+    displayAdjaList(&list1);
+    printf("\n");
+    verifMarkov(&list1);
+    printf("\n");
 
 
-    adjlist test4 = readGraph("data/exemple_valid_step3.txt");
-    creerMermaid(&test4, "resultatgraph.mmd"); // Génère un fichier MMD comptabile pour l'affichage sur Mermaid.
+    //Essai sur les donnés de exemple2.txt
 
+    printf("Essai sur exemple2 :\n");
+    adj_list list2 = readGraph("data/exemple2.txt");
+    displayAdjaList(&list2);
+    printf("\n");
+    verifMarkov(&list2);
+    printf("\n");
+
+    //Essai sur les donnés de exemple1_from_chatGPT.txt
+
+    printf("Essai sur exemple1_from_chatGPT.txt :\n");
+    adj_list list3 = readGraph("data/exemple1_from_chatGPT.txt");
+    displayAdjaList(&list3);
+    printf("\n");
+    verifMarkov(&list3);
+    printf("\n");
+
+    //Conversion des données du graph en données mermaid avec exemple_valid_step3.txt
+
+    printf("Creation du fichier mermaid sur exemple_valid_step3.txt !\n");
+    adj_list list4 = readGraph("data/exemple_valid_step3.txt");
+    convertMermaid(&list4, "resultatmermaid.txt");
 
     return 0;
 }
