@@ -92,3 +92,20 @@ void t_parcours(
     stack *,
     tarjan_partition *
 );
+
+// Fonctions sur la pile
+void stack_init(stack *, int);
+void stack_push(stack *, int);
+int  stack_pop(stack *);
+int  stack_empty(stack *);
+
+// Algo principal de Tarjan
+tarjan_partition tarjan(adj_list *);
+
+// Affichage des classes
+void printPartition(tarjan_partition *);
+
+// Tableau sommet -> classe
+int *computeVertexToClassTable(tarjan_partition *, adj_list *);
+
+#endif
