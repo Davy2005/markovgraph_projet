@@ -333,3 +333,24 @@ void t_parcours(int v, adj_list *G, tarjan_vertex *T, stack *S, tarjan_partition
         }
     }
 }
+
+// Lance Tarjan sur tout le graphe
+tarjan_partition tarjan(adj_list *g)
+{
+    tarjan_partition P;
+    P.size = 0;
+    P.capacity = 4;
+    P.classes = malloc(4 * sizeof(tarjan_class));
+
+    tarjan_vertex *T = initTabTarjanVertex(g);
+    stack S;
+    stack_init(&S, g->size);
+    TARJAN_INDEX = 0;
+
+    // On lance le DFS sur chaque sommet non encore visité
+    for (int i = 0; i < g->size; i++)
+        if (T[i].index == -1)
+            t_parcours(i, g, T, &S, &P);
+
+    return P;
+}
