@@ -154,106 +154,23 @@ int main() {
 
     displayGraphSpecificity(&part, &links);
 
-
-    // *************************
-    // Partie 3 : matrices / distributions
-    // *************************
+    // =======================================================
+    // PARTIE 3 - ETAPE 1 : calculs matriciels (exemple meteo)
+    // =======================================================
 
     printf("==============================================\n");
-    printf("        TEST PARTIE 3 : MATRICES / DISTRIBUTIONS\n");
+    printf("        PARTIE 3 - ETAPE 1 : MATRICES\n");
     printf("==============================================\n\n");
 
-    // -----------------------------------------------
-    // 1) Chargement du graphe meteo + matrice M
-    // -----------------------------------------------
+    // 1) Graphe meteo -> matrice M
     printf("[1] Chargement du graphe meteo (exemple_meteo.txt)...\n");
     adj_list g_meteo = readGraph("data/exemple_meteo.txt");
     printf("Graphe meteo charge avec %d etats.\n\n", g_meteo.size);
 
-    printf("Liste d'adjacence du graphe meteo :\n");
-    displayAdjaList(&g_meteo);
-    printf("\n");
-
-    printf("[2] Construction de la matrice de transition M...\n");
+    printf("Matrice de transition M :\n");
     t_matrix M = createMatrixFromAdjList(&g_meteo);
-
-    printf("Matrice M (transition d'un jour au suivant) :\n");
     printMatrix(M);
     printf("\n");
-
-    // -----------------------------------------------
-    // 2) Calcul de M^3
-    // -----------------------------------------------
-    printf("[3] Calcul de M^3...\n");
-    t_matrix Mpow = createZeroMatrix(M.n);
-    t_matrix tmp  = createZeroMatrix(M.n);
-
-    // Mpow = M
-    copyMatrix(Mpow, M);
-    int power = 1;
-
-    while (power < 3) {
-        // tmp = Mpow * M
-        multiplyMatrices(Mpow, M, tmp);
-        // Mpow = tmp
-        copyMatrix(Mpow, tmp);
-        power++;
-    }
-
-    printf("M^3 :\n");
-    printMatrix(Mpow);
-    printf("\n");
-
-    // -----------------------------------------------
-    // 3) Calcul de M^7
-    // -----------------------------------------------
-    printf("[4] Calcul de M^7...\n");
-
-    // On repart de Mpow = M
-    copyMatrix(Mpow, M);
-    power = 1;
-
-    while (power < 7) {
-        multiplyMatrices(Mpow, M, tmp);  // tmp = Mpow * M
-        copyMatrix(Mpow, tmp);           // Mpow = tmp
-        power++;
-    }
-
-    printf("M^7 :\n");
-    printMatrix(Mpow);
-    printf("\n");
-
-    // -----------------------------------------------
-    // 4) Recherche d'un n tel que diff(M^n, M^(n-1)) < 0.01
-    // -----------------------------------------------
-    printf("[5] Recherche de n tel que diff(M^n, M^(n-1)) < 0.01...\n");
-
-    // On repart encore de M^1 = M
-    copyMatrix(Mpow, M);
-    power = 1;
-    double eps = 0.01;
-
-    while (1) {
-        // tmp = M^(power+1)
-        multiplyMatrices(Mpow, M, tmp);
-
-        double d = diffMatrix(tmp, Mpow);
-        printf("diff(M^%d, M^%d) = %.6f\n", power + 1, power, d);
-
-        copyMatrix(Mpow, tmp);
-        power++;
-
-        if (d < eps || power > 100) {
-            break;  // on s'arrete soit parce que ça converge, soit par sécurité
-        }
-    }
-
-    printf("\nOn s'arrete a n = %d (diff < %.2f ou max iterations atteint).\n", power, eps);
-    printf("M^%d :\n", power);
-    printMatrix(Mpow);
-    printf("\n");
-
-
 
     free(classOf);
     return 0;
