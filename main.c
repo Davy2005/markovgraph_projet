@@ -56,7 +56,7 @@ int main() {
 
     printf("Creation du fichier mermaid sur exemple_valid_step3.txt !\n");
     adj_list list4 = readGraph("data/exemple_valid_step3.txt");
-    convertMermaid(&list4, "resultatmermaid.mmd");
+    convertMermaid(&list4, "exemple_valid_step3.mmd");
 
     printf("==============================================\n");
     printf("        TEST PARTIE 2 : TARJAN + HASSE        \n");
@@ -139,11 +139,11 @@ int main() {
     // =======================================================
     // 6) Export du Hasse en Mermaid
     // =======================================================
-    printf("[6] Export du diagramme de Hasse (hasse_test_output.mmd)...\n");
+    printf("[6] Export du diagramme de Hasse (hasse_exemple_valid_step3.mmd)...\n");
 
-    convertHasseToMermaid(&part, &links, "hasse_test_output.mmd");
+    convertHasseToMermaid(&part, &links, "hasse_exemple_valid_step3.mmd");
 
-    printf("Fichier genere : hasse_test_output.mmd\n");
+    printf("Fichier genere : hasse_exemple_valid_step3.mmd\n");
     printf("\n");
 
     // =======================================================
