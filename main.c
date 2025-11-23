@@ -227,6 +227,64 @@ int main() {
     convertMermaid(&g_meteo, "meteo_mermaid.mmd");
 
     printf("\n");
+
+    // =======================================================
+    // PARTIE 3 - ETAPE 2 : distributions stationnaires par classe
+    // (sur le graphe g = exemple_valid_step3.txt utilise en partie 2)
+    // =======================================================
+
+    printf("==============================================\n");
+    printf("   PARTIE 3 - ETAPE 2 : distributions stationnaires par classe\n");
+    printf("==============================================\n\n");
+
+    // Matrice globale pour le graphe g (exemple_valid_step3.txt)
+    t_matrix Mglob = createMatrixFromAdjList(&g);
+
+    for (int c = 0; c < part.size; c++) {
+        tarjan_class *C = &part.classes[c];
+
+        printf("Classe %s :\n", C->name);
+
+        // Sous-matrice correspondant à cette classe
+        t_matrix Mc = subMatrix(Mglob, part, c);
+
+        printf("  Sous-matrice Mc :\n");
+        printMatrix(Mc);
+        printf("\n");
+
+        // Calcul des puissances de Mc jusqu'à stabilisation
+        t_matrix Pc   = createZeroMatrix(Mc.n);  // contiendra Mc^n
+        t_matrix tmpc = createZeroMatrix(Mc.n);
+
+        copyMatrix(Pc, Mc);   // Pc = Mc^1
+        int pwr = 1;
+
+        while (1) {
+            multiplyMatrices(Pc, Mc, tmpc);   // tmpc = Pc * Mc = Mc^(pwr+1)
+            double d = diffMatrix(tmpc, Pc);  // diff entre Mc^n et Mc^(n-1)
+
+            copyMatrix(Pc, tmpc);             // Pc = Mc^(pwr+1)
+            pwr++;
+
+            if (d < eps || pwr > 100) {
+                printf("  -> Stabilisation (ou max iters) a n = %d, diff = %.6f\n",
+                       pwr, d);
+                break;
+            }
+        }
+
+        // La premiere ligne de Pc est la distribution limite approx.
+        printf("  Distribution limite approx pour la classe %s :\n", C->name);
+        double somme = 0.0;
+        for (int j = 0; j < Pc.n; j++) {
+            double val = Pc.m[0][j];
+            somme += val;
+            int sommet = C->vertices[j];  // numero de sommet global
+            printf("    Etat %d : %.4f\n", sommet, val);
+        }
+        printf("    Somme des probabilites = %.4f\n\n", somme);
+
+    }
     
     free(classOf);
     return 0;
