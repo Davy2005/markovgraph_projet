@@ -49,7 +49,7 @@ cell *createCell(int destination, float prob)
 }
 
 //Cree une liste chainee simple avec un head
-list createList(void)
+list createList()
 {
     list l;
     l.head = NULL;
