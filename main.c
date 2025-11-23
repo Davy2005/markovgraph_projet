@@ -43,10 +43,10 @@ int main() {
     verifMarkov(&list2);
     printf("\n");
 
-    //Essai sur les donnés de exemple1_from_chatGPT.txt
+    //Essai sur les donnés de exemple3.txt
 
-    printf("Essai sur exemple1_from_chatGPT.txt :\n");
-    adj_list list3 = readGraph("data/exemple1_from_chatGPT.txt");
+    printf("Essai sur exemple3.txt :\n");
+    adj_list list3 = readGraph("data/exemple3.txt");
     displayAdjaList(&list3);
     printf("\n");
     verifMarkov(&list3);
@@ -54,8 +54,12 @@ int main() {
 
     //Essai la conversion des données du graph en données mermaid avec exemple_valid_step3.txt
 
-    printf("Creation du fichier mermaid sur exemple_valid_step3.txt !\n");
+    printf("Essai sur exemple_valid_step3.txt :\n");
     adj_list list4 = readGraph("data/exemple_valid_step3.txt");
+    displayAdjaList(&list4);
+    printf("\n");
+    verifMarkov(&list4);
+    printf("Creation du fichier mermaid sur exemple_valid_step3.txt !\n");
     convertMermaid(&list4, "exemple_valid_step3.mmd");
 
     printf("==============================================\n");
