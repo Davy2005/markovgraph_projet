@@ -172,6 +172,62 @@ int main() {
     printMatrix(M);
     printf("\n");
 
+    // 2) Calcul de M^3
+    printf("[2] Calcul de M^3...\n");
+    t_matrix P = createZeroMatrix(M.n);
+    t_matrix tmp = createZeroMatrix(M.n);
+
+    copyMatrix(P, M);      // P = M^1
+    int power = 1;
+    while (power < 3) {
+        multiplyMatrices(P, M, tmp);  // tmp = P * M
+        copyMatrix(P, tmp);           // P = tmp
+        power++;
+    }
+    printf("M^3 :\n");
+    printMatrix(P);
+    printf("\n");
+
+    // 3) Calcul de M^7
+    printf("[3] Calcul de M^7...\n");
+    copyMatrix(P, M);      // repart de M^1
+    power = 1;
+    while (power < 7) {
+        multiplyMatrices(P, M, tmp);
+        copyMatrix(P, tmp);
+        power++;
+    }
+    printf("M^7 :\n");
+    printMatrix(P);
+    printf("\n");
+
+    // 4) Recherche d'un n tel que diff(M^n, M^(n-1)) < 0.01
+    printf("[4] Recherche de n tel que diff(M^n, M^(n-1)) < 0.01...\n");
+    double eps = 0.01;
+    copyMatrix(P, M);  // P = M^1
+    power = 1;
+
+    while (1) {
+        multiplyMatrices(P, M, tmp);       // tmp = M^(power+1)
+        double d = diffMatrix(tmp, P);     // diff entre M^(n) et M^(n-1)
+        printf("  diff(M^%d, M^%d) = %.6f\n", power + 1, power, d);
+
+        copyMatrix(P, tmp);                // P = M^(power+1)
+        power++;
+
+        if (d < eps || power > 100) break; // sécurité si ça ne converge pas
+    }
+
+    printf("\nOn s'arrete a n = %d (diff < %.2f ou max iterations).\n", power, eps);
+    printf("M^%d :\n", power);
+    printMatrix(P);
+    printf("\n");
+
+    printf("Exportation des donnes de graph de meteo dans un fichier meteo_mermaid.mmd .\n");
+    convertMermaid(&g_meteo, "meteo_mermaid.mmd");
+
+    printf("\n");
+    
     free(classOf);
     return 0;
 }
